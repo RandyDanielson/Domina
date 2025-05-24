@@ -20,7 +20,6 @@ class PopupController {
 
   async groupTabs() {
     const button = document.getElementById('groupTabs');
-    const status = document.getElementById('status');
     
     try {
       // Disable button and show loading
