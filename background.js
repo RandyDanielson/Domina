@@ -241,10 +241,16 @@ const tabGrouper = new TabGrouper();
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'groupTabs') {
-    tabGrouper.groupAllExistingTabs();
-    sendResponse({ success: true });
+    (async () => {
+      await tabGrouper.groupAllExistingTabs();
+      sendResponse({ success: true });
+    })();
+    return true; // Indicate that the response will be sent asynchronously
   } else if (request.action === 'ungroupTabs') {
-    tabGrouper.ungroupAllTabs();
-    sendResponse({ success: true });
+    (async () => {
+      await tabGrouper.ungroupAllTabs();
+      sendResponse({ success: true });
+    })();
+    return true; // Indicate that the response will be sent asynchronously
   }
 });
