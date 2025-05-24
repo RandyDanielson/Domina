@@ -154,7 +154,7 @@ class PopupController {
 
 // Initialize popup when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  new PopupController();
+  window.popupController = new PopupController();
 });
 
 // Update stats when popup is opened
