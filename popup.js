@@ -117,7 +117,7 @@ class PopupController {
       tabs.forEach(tab => {
         if (tab.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('edge://')) {
           try {
-            const domain = new URL(tab.url).hostname.replace('www.', '');
+            const domain = this.extractDomain(tab.url);
             domains.add(domain);
           } catch (error) {
             // Invalid URL, skip
