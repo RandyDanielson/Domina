@@ -85,7 +85,7 @@ class PopupController {
       
       // Reset status after 3 seconds
       setTimeout(() => {
-        this.updateStatus('Ready to group tabs', '');
+        this.updateStatus('Tabs are ungrouped. Ready for the next action.', '');
       }, 3000);
     }
   }
