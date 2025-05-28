@@ -3,22 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tab Grouper by Domain</title>
+    <title>Domina</title>
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Tab Grouper</h1>
-            <p class="subtitle">Organize tabs by domain</p>
+            <h1>Domina</h1>
+            <p class="subtitle">Organize tabs by their domain name for improved tab management</p>
         </header>
         
         <main>
-            <div class="status" id="status">
-                <span class="status-text">Ready to group tabs</span>
-            </div>
-            
             <div class="controls">
+                <div class="setting-item">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="autoGroupToggle" class="toggle-input">
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-text">Auto-group new tabs</span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="autoAlphabetizeToggle" class="toggle-input">
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-text">Auto-alphabetize groups</span>
+                    </label>
+                </div>
+                
                 <button id="groupTabs" class="btn btn-primary">
                     <span class="btn-icon">📁</span>
                     Group All Tabs
@@ -28,15 +40,20 @@
                     <span class="btn-icon">📂</span>
                     Ungroup All Tabs
                 </button>
+                
+                <button id="alphabetizeTabs" class="btn btn-tertiary">
+                    <span class="btn-icon">🔤</span>
+                    Alphabetize Groups
+                </button>
             </div>
             
             <div class="info">
                 <h3>How it works:</h3>
                 <ul>
-                    <li>Manually group tabs by domain name</li>
-                    <li>Each domain gets a unique color</li>
-                    <li>Click "Group All Tabs" to organize</li>
-                    <li>Groups are labeled with domain names</li>
+                    <li>Manually group tabs by domain name.</li>
+                    <li>Each domain gets a unique color.</li>
+                    <li>Click "Group All Tabs" to organize.</li>
+                    <li>Groups are labeled with domain names.</li>
                 </ul>
             </div>
             
@@ -46,11 +63,11 @@
                     <span class="stat-value" id="totalTabs">-</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Domains:</span>
+                    <span class="stat-label">Total Domains:</span>
                     <span class="stat-value" id="totalDomains">-</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Groups:</span>
+                    <span class="stat-label">Total Groups:</span>
                     <span class="stat-value" id="totalGroups">-</span>
                 </div>
             </div>

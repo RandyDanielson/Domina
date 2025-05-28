@@ -14,7 +14,20 @@ class PopupController {
       this.ungroupTabs();
     });
 
-    // Load initial stats
+    document.getElementById('alphabetizeTabs').addEventListener('click', () => {
+      this.alphabetizeTabs();
+    });
+
+    document.getElementById('autoGroupToggle').addEventListener('change', (e) => {
+      this.toggleAutoGroup(e.target.checked);
+    });
+
+    document.getElementById('autoAlphabetizeToggle').addEventListener('change', (e) => {
+      this.toggleAutoAlphabetize(e.target.checked);
+    });
+
+    // Load initial stats and settings
+    this.loadSettings();
     this.updateStats();
   }
 
@@ -139,6 +152,113 @@ class PopupController {
       document.getElementById('totalTabs').textContent = '-';
       document.getElementById('totalDomains').textContent = '-';
       document.getElementById('totalGroups').textContent = '-';
+    }
+  }
+
+  async alphabetizeTabs() {
+    const button = document.getElementById('alphabetizeTabs');
+    
+    try {
+      // Disable button and show loading
+      button.disabled = true;
+      button.innerHTML = '<span class="loading"></span> Alphabetizing...';
+      
+      this.updateStatus('Alphabetizing tab groups...', 'info');
+
+      // Send message to background script
+      const response = await chrome.runtime.sendMessage({ action: 'alphabetizeTabs' });
+      
+      if (response.success) {
+        this.updateStatus('Tab groups alphabetized successfully!', 'success');
+        setTimeout(() => {
+          this.updateStats();
+        }, 1000);
+      } else {
+        this.updateStatus('Failed to alphabetize tab groups', 'error');
+      }
+    } catch (error) {
+      console.error('Error alphabetizing tabs:', error);
+      this.updateStatus('Error occurred while alphabetizing tab groups', 'error');
+    } finally {
+      // Re-enable button
+      button.disabled = false;
+      button.innerHTML = '<span class="btn-icon">🔤</span> Alphabetize Groups';
+      
+      // Reset status after 3 seconds
+      setTimeout(() => {
+        this.updateStatus('Tab groups are alphabetized. Ready for the next action.', '');
+      }, 3000);
+    }
+  }
+
+  async loadSettings() {
+    try {
+      const result = await chrome.storage.sync.get(['autoGroupEnabled', 'autoAlphabetizeEnabled']);
+      const autoGroupEnabled = result.autoGroupEnabled || false;
+      const autoAlphabetizeEnabled = result.autoAlphabetizeEnabled || false;
+      
+      document.getElementById('autoGroupToggle').checked = autoGroupEnabled;
+      document.getElementById('autoAlphabetizeToggle').checked = autoAlphabetizeEnabled;
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+  }
+
+  async toggleAutoGroup(enabled) {
+    try {
+      // Save setting
+      await chrome.storage.sync.set({ autoGroupEnabled: enabled });
+      
+      // Send message to background script
+      await chrome.runtime.sendMessage({ 
+        action: 'setAutoGroup', 
+        enabled: enabled 
+      });
+      
+      // Update status
+      if (enabled) {
+        this.updateStatus('Auto-grouping enabled for new tabs', 'success');
+      } else {
+        this.updateStatus('Auto-grouping disabled', 'info');
+      }
+      
+      // Reset status after 2 seconds
+      setTimeout(() => {
+        this.updateStatus('', '');
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error toggling auto-group:', error);
+      this.updateStatus('Error updating auto-group setting', 'error');
+    }
+  }
+
+  async toggleAutoAlphabetize(enabled) {
+    try {
+      // Save setting
+      await chrome.storage.sync.set({ autoAlphabetizeEnabled: enabled });
+      
+      // Send message to background script
+      await chrome.runtime.sendMessage({ 
+        action: 'setAutoAlphabetize', 
+        enabled: enabled 
+      });
+      
+      // Update status
+      if (enabled) {
+        this.updateStatus('Auto-alphabetizing enabled for groups', 'success');
+      } else {
+        this.updateStatus('Auto-alphabetizing disabled', 'info');
+      }
+      
+      // Reset status after 2 seconds
+      setTimeout(() => {
+        this.updateStatus('', '');
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error toggling auto-alphabetize:', error);
+      this.updateStatus('Error updating auto-alphabetize setting', 'error');
     }
   }
 

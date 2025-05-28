@@ -1,20 +1,21 @@
 {
   "manifest_version": 3,
-  "name": "Tab Grouper by Domain",
+  "name": "Domina – Tab Grouper by Domain",
   "version": "1.0.0",
-  "description": "Automatically groups tabs by their domain name for better organization",
+  "description": "Domina organizes tabs by their domain name for improved tab management.",
   "permissions": [
     "tabs",
     "tabGroups",
     "activeTab",
-    "contextMenus"
+    "contextMenus",
+    "storage"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Tab Grouper",
+    "default_title": "Domina",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",

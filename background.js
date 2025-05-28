@@ -6,13 +6,52 @@ class TabGrouper {
       'grey', 'blue', 'red', 'yellow', 'green', 'pink', 'purple', 'cyan'
     ];
     this.colorIndex = 0;
+    this.autoGroupEnabled = false;
+    this.autoAlphabetizeEnabled = false;
     this.init();
   }
 
-  init() {
-    // Extension is now completely manual - no automatic grouping
-    // Users must trigger grouping through the popup interface or context menu
+  async init() {
+    // Load settings
+    await this.loadSettings();
+    
+    // Set up event listeners
     this.createContextMenus();
+    this.setupTabListeners();
+  }
+
+  async loadSettings() {
+    try {
+      const result = await chrome.storage.sync.get(['autoGroupEnabled', 'autoAlphabetizeEnabled']);
+      this.autoGroupEnabled = result.autoGroupEnabled || false;
+      this.autoAlphabetizeEnabled = result.autoAlphabetizeEnabled || false;
+    } catch (error) {
+      console.error('Error loading settings:', error);
+      this.autoGroupEnabled = false;
+      this.autoAlphabetizeEnabled = false;
+    }
+  }
+
+  setupTabListeners() {
+    // Listen for new tabs being created
+    chrome.tabs.onCreated.addListener((tab) => {
+      if (this.autoGroupEnabled) {
+        // Small delay to ensure tab is fully loaded
+        setTimeout(() => {
+          this.autoGroupNewTab(tab);
+        }, 500);
+      }
+    });
+
+    // Listen for tab updates (URL changes)
+    chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+      if (this.autoGroupEnabled && changeInfo.url) {
+        // Small delay to ensure tab is fully loaded
+        setTimeout(() => {
+          this.autoGroupNewTab(tab);
+        }, 500);
+      }
+    });
   }
 
   createContextMenus() {
@@ -48,6 +87,18 @@ class TabGrouper {
         title: 'Ungroup Tabs from This Domain',
         contexts: ['page', 'action']
       });
+
+      chrome.contextMenus.create({
+        id: 'separator2',
+        type: 'separator',
+        contexts: ['page', 'action']
+      });
+
+      chrome.contextMenus.create({
+        id: 'alphabetizeGroups',
+        title: 'Alphabetize Tab Groups',
+        contexts: ['page', 'action']
+      });
     });
 
     // Listen for context menu clicks
@@ -70,6 +121,9 @@ class TabGrouper {
           break;
         case 'ungroupCurrentDomain':
           await this.ungroupTabsByDomain(tab);
+          break;
+        case 'alphabetizeGroups':
+          await this.alphabetizeTabGroups();
           break;
       }
     } catch (error) {
@@ -173,6 +227,63 @@ class TabGrouper {
     return this.domainColors.get(domain);
   }
 
+  async autoGroupNewTab(tab) {
+    if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('edge://') || tab.url.startsWith('about:')) {
+      return;
+    }
+
+    try {
+      const domain = this.extractDomain(tab.url);
+      
+      // Get all tabs in the same window
+      const tabs = await chrome.tabs.query({ windowId: tab.windowId });
+      
+      // Find other tabs with the same domain
+      const sameDomainTabs = tabs.filter(t => 
+        t.id !== tab.id && // Exclude the current tab
+        t.url && 
+        this.extractDomain(t.url) === domain
+      );
+
+      if (sameDomainTabs.length > 0) {
+        // Check if any of these tabs are already in a group
+        const groupedTabs = sameDomainTabs.filter(t => t.groupId !== chrome.tabGroups.TAB_GROUP_ID_NONE);
+        
+        if (groupedTabs.length > 0) {
+          // Add to existing group
+          const existingGroupId = groupedTabs[0].groupId;
+          await chrome.tabs.group({
+            tabIds: [tab.id],
+            groupId: existingGroupId
+          });
+        } else {
+          // Create new group with all tabs from this domain
+          const allDomainTabs = [...sameDomainTabs, tab];
+          const color = this.getColorForDomain(domain);
+          
+          const groupId = await chrome.tabs.group({
+            tabIds: allDomainTabs.map(t => t.id)
+          });
+
+          await chrome.tabGroups.update(groupId, {
+            title: domain,
+            color: color,
+            collapsed: false
+          });
+
+          // Auto-alphabetize if enabled
+          if (this.autoAlphabetizeEnabled) {
+            setTimeout(() => {
+              this.alphabetizeTabGroups();
+            }, 100);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error auto-grouping new tab:', error);
+    }
+  }
+
 
   async groupAllExistingTabs() {
     try {
@@ -213,6 +324,13 @@ class TabGrouper {
           }
         }
       }
+
+      // Auto-alphabetize if enabled
+      if (this.autoAlphabetizeEnabled) {
+        setTimeout(() => {
+          this.alphabetizeTabGroups();
+        }, 200);
+      }
     } catch (error) {
       console.error('Error grouping existing tabs:', error);
     }
@@ -233,6 +351,78 @@ class TabGrouper {
       console.error('Error ungrouping tabs:', error);
     }
   }
+
+  async alphabetizeTabGroups() {
+    try {
+      const windows = await chrome.windows.getAll({ populate: true });
+      
+      for (const window of windows) {
+        // Get all tab groups in the window
+        const groups = await chrome.tabGroups.query({ windowId: window.id });
+        
+        if (groups.length === 0) continue;
+        
+        // Sort groups alphabetically by title
+        const sortedGroups = groups.sort((a, b) => {
+          const titleA = a.title || '';
+          const titleB = b.title || '';
+          return titleA.localeCompare(titleB);
+        });
+        
+        // Get all tabs for each group and move them in alphabetical order
+        for (let i = 0; i < sortedGroups.length; i++) {
+          const group = sortedGroups[i];
+          const groupTabs = await chrome.tabs.query({ 
+            windowId: window.id, 
+            groupId: group.id 
+          });
+          
+          if (groupTabs.length > 0) {
+            // Calculate the target position for this group
+            // We'll move each group to position them alphabetically
+            const targetIndex = i === 0 ? 0 : await this.calculateGroupPosition(window.id, i);
+            
+            // Move the first tab of the group to the target position
+            // This will move the entire group
+            await chrome.tabs.move(groupTabs[0].id, { index: targetIndex });
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error alphabetizing tab groups:', error);
+    }
+  }
+
+  async calculateGroupPosition(windowId, groupIndex) {
+    try {
+      // Get all tabs in the window
+      const allTabs = await chrome.tabs.query({ windowId: windowId });
+      
+      // Count tabs that are not in groups (they come first)
+      const ungroupedTabs = allTabs.filter(tab => tab.groupId === chrome.tabGroups.TAB_GROUP_ID_NONE);
+      
+      // Get all groups and sort them alphabetically
+      const groups = await chrome.tabGroups.query({ windowId: windowId });
+      const sortedGroups = groups.sort((a, b) => {
+        const titleA = a.title || '';
+        const titleB = b.title || '';
+        return titleA.localeCompare(titleB);
+      });
+      
+      // Calculate position: ungrouped tabs + tabs from previous groups
+      let position = ungroupedTabs.length;
+      
+      for (let i = 0; i < groupIndex; i++) {
+        const groupTabs = allTabs.filter(tab => tab.groupId === sortedGroups[i].id);
+        position += groupTabs.length;
+      }
+      
+      return position;
+    } catch (error) {
+      console.error('Error calculating group position:', error);
+      return 0;
+    }
+  }
 }
 
 // Initialize the tab grouper
@@ -249,6 +439,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.action === 'ungroupTabs') {
     (async () => {
       await tabGrouper.ungroupAllTabs();
+      sendResponse({ success: true });
+    })();
+    return true; // Indicate that the response will be sent asynchronously
+  } else if (request.action === 'alphabetizeTabs') {
+    (async () => {
+      await tabGrouper.alphabetizeTabGroups();
+      sendResponse({ success: true });
+    })();
+    return true; // Indicate that the response will be sent asynchronously
+  } else if (request.action === 'setAutoGroup') {
+    (async () => {
+      tabGrouper.autoGroupEnabled = request.enabled;
+      await chrome.storage.sync.set({ autoGroupEnabled: request.enabled });
+      sendResponse({ success: true });
+    })();
+    return true; // Indicate that the response will be sent asynchronously
+  } else if (request.action === 'setAutoAlphabetize') {
+    (async () => {
+      tabGrouper.autoAlphabetizeEnabled = request.enabled;
+      await chrome.storage.sync.set({ autoAlphabetizeEnabled: request.enabled });
       sendResponse({ success: true });
     })();
     return true; // Indicate that the response will be sent asynchronously
