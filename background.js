@@ -222,13 +222,15 @@ class TabGrouper {
     try {
       const windows = await chrome.windows.getAll({ populate: true });
       
+      const ungroupPromises = [];
       for (const window of windows) {
         for (const tab of window.tabs) {
           if (tab.groupId !== chrome.tabGroups.TAB_GROUP_ID_NONE) {
-            await chrome.tabs.ungroup(tab.id);
+            ungroupPromises.push(chrome.tabs.ungroup(tab.id));
           }
         }
       }
+      await Promise.all(ungroupPromises);
     } catch (error) {
       console.error('Error ungrouping tabs:', error);
     }
