@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Grouper by Domain</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tab Grouper</h1>
+            <p class="subtitle">Organize tabs by domain</p>
+        </header>
+        
+        <main>
+            <div class="status" id="status">
+                <span class="status-text">Ready to group tabs</span>
+            </div>
+            
+            <div class="controls">
+                <button id="groupTabs" class="btn btn-primary">
+                    <span class="btn-icon">📁</span>
+                    Group All Tabs
+                </button>
+                
+                <button id="ungroupTabs" class="btn btn-secondary">
+                    <span class="btn-icon">📂</span>
+                    Ungroup All Tabs
+                </button>
+            </div>
+            
+            <div class="info">
+                <h3>How it works:</h3>
+                <ul>
+                    <li>Manually group tabs by domain name</li>
+                    <li>Each domain gets a unique color</li>
+                    <li>Click "Group All Tabs" to organize</li>
+                    <li>Groups are labeled with domain names</li>
+                </ul>
+            </div>
+            
+            <div class="stats" id="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Tabs:</span>
+                    <span class="stat-value" id="totalTabs">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Domains:</span>
+                    <span class="stat-value" id="totalDomains">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Groups:</span>
+                    <span class="stat-value" id="totalGroups">-</span>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p class="version">v1.0.0</p>
+        </footer>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>
