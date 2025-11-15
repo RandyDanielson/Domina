@@ -1,0 +1,80 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle with Gradient -->
+  <circle cx="64" cy="64" r="60" fill="url(#bgGradient)"/>
+
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="tabGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Shadow for depth -->
+  <circle cx="64" cy="66" r="58" fill="rgba(0,0,0,0.1)" filter="blur(3px)"/>
+
+  <!-- Tab Group Container - Left Group -->
+  <g transform="translate(24, 32)">
+    <!-- Group bracket -->
+    <path d="M 0 0 L 0 38 L 2 38 L 2 0 Z" fill="white" opacity="0.9"/>
+
+    <!-- Tabs in left group -->
+    <rect x="6" y="2" width="18" height="10" rx="2" fill="url(#tabGradient)" opacity="0.95"/>
+    <rect x="6" y="14" width="18" height="10" rx="2" fill="url(#tabGradient)" opacity="0.95"/>
+    <rect x="6" y="26" width="18" height="10" rx="2" fill="url(#tabGradient)" opacity="0.95"/>
+
+    <!-- Color indicator for group -->
+    <rect x="5" y="1" width="2" height="36" rx="1" fill="#10b981"/>
+  </g>
+
+  <!-- Tab Group Container - Center Group -->
+  <g transform="translate(52, 32)">
+    <!-- Group bracket -->
+    <path d="M 0 0 L 0 38 L 2 38 L 2 0 Z" fill="white" opacity="0.9"/>
+
+    <!-- Tabs in center group -->
+    <rect x="6" y="2" width="18" height="10" rx="2" fill="url(#tabGradient)" opacity="0.95"/>
+    <rect x="6" y="14" width="18" height="10" rx="2" fill="url(#tabGradient)" opacity="0.95"/>
+    <rect x="6" y="26" width="18" height="10" rx="2" fill="url(#tabGradient)" opacity="0.95"/>
+
+    <!-- Color indicator for group -->
+    <rect x="5" y="1" width="2" height="36" rx="1" fill="#3b82f6"/>
+  </g>
+
+  <!-- Tab Group Container - Right Group -->
+  <g transform="translate(80, 32)">
+    <!-- Group bracket -->
+    <path d="M 0 0 L 0 38 L 2 38 L 2 0 Z" fill="white" opacity="0.9"/>
+
+    <!-- Tabs in right group -->
+    <rect x="6" y="2" width="18" height="10" rx="2" fill="url(#tabGradient)" opacity="0.95"/>
+    <rect x="6" y="14" width="18" height="10" rx="2" fill="url(#tabGradient)" opacity="0.95"/>
+    <rect x="6" y="26" width="18" height="10" rx="2" fill="url(#tabGradient)" opacity="0.95"/>
+
+    <!-- Color indicator for group -->
+    <rect x="5" y="1" width="2" height="36" rx="1" fill="#f59e0b"/>
+  </g>
+
+  <!-- Bottom accent - organization symbol -->
+  <g transform="translate(44, 80)">
+    <!-- Folder/organization icon -->
+    <path d="M 4 0 L 12 0 L 14 4 L 36 4 L 36 20 L 4 20 Z" fill="white" opacity="0.3" rx="2"/>
+    <path d="M 4 4 L 36 4 L 36 20 L 4 20 Z" fill="white" opacity="0.5" rx="1"/>
+
+    <!-- Checkmark for "organized" -->
+    <path d="M 16 12 L 18 14 L 24 8" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Shine effect -->
+  <circle cx="64" cy="64" r="60" fill="url(#shineGradient)" opacity="0.3"/>
+  <defs>
+    <radialGradient id="shineGradient" cx="30%" cy="30%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+</svg>
