@@ -1,13 +1,16 @@
-# Tab Grouper by Domain - Microsoft Edge Extension
+# Tab Grouper by Domain - Browser Extension
 
-A browser extension that automatically groups tabs by their domain name for better organization and productivity.
+A browser extension that helps you organize tabs by their domain name with manual grouping controls for better organization and productivity.
 
 ## Features
 
-- **Automatic Grouping**: Automatically groups tabs by domain name as you browse
+- **Manual Tab Grouping**: Group tabs by domain name with one click
+- **Domain-Specific Actions**: Group or ungroup tabs from a specific domain
+- **Context Menu Integration**: Quick access via right-click menus
 - **Color-Coded Groups**: Each domain gets a unique color for easy identification
-- **Manual Controls**: Group or ungroup all tabs with one click
+- **Bulk Operations**: Group or ungroup all tabs at once
 - **Real-time Stats**: View tab, domain, and group counts
+- **Multi-Window Support**: Works across all browser windows
 - **Lightweight**: Minimal performance impact on browsing
 
 ## Installation
@@ -32,18 +35,29 @@ A browser extension that automatically groups tabs by their domain name for bett
 
 ## How to Use
 
-1. **Automatic Grouping**: The extension automatically groups tabs as you browse
-2. **Manual Grouping**: Click the extension icon and press "Group All Tabs"
-3. **Ungroup Tabs**: Use the "Ungroup All Tabs" button to remove all groupings
-4. **View Stats**: See real-time statistics in the popup
+### Via Popup Interface
+1. Click the extension icon in the toolbar
+2. Click **"Group All Tabs"** to organize all tabs by domain
+3. Click **"Ungroup All Tabs"** to remove all groupings
+4. View real-time statistics (tabs, domains, groups)
+
+### Via Context Menu
+1. Right-click on any webpage or the extension icon
+2. Select from these options:
+   - **Group All Tabs by Domain** - Groups all tabs across all windows
+   - **Ungroup All Tabs** - Removes all tab groups
+   - **Group Tabs from This Domain** - Groups only tabs from current domain
+   - **Ungroup Tabs from This Domain** - Ungroups tabs from current domain
 
 ## How It Works
 
-- Monitors tab creation and updates
-- Extracts domain names from URLs (removes www. prefix)
-- Groups tabs with the same domain together
-- Assigns unique colors to each domain group
-- Provides manual controls through the popup interface
+- **Manual Control**: Extension operates only when you trigger grouping actions
+- **Domain Extraction**: Extracts clean domain names from URLs (removes www. prefix)
+- **Smart Grouping**: Groups tabs with the same domain together
+- **Color Assignment**: Assigns unique colors to each domain from a palette of 8 colors
+- **Multi-Window**: Processes tabs across all browser windows
+- **Intelligent Merging**: Adds ungrouped tabs to existing domain groups when available
+- **Protected URLs**: Automatically skips browser-specific URLs (chrome://, edge://)
 
 ## File Structure
 
@@ -66,6 +80,9 @@ The extension requires the following permissions:
 - `tabs`: To access and manage browser tabs
 - `tabGroups`: To create and manage tab groups
 - `activeTab`: To work with the currently active tab
+- `contextMenus`: To provide right-click menu functionality
+
+**Privacy Note**: This extension does not collect, store, or transmit any user data. All operations are performed locally in your browser.
 
 ## Browser Compatibility
 
@@ -127,9 +144,27 @@ The extension requires the following permissions:
 
 This project is open source and available under the MIT License.
 
+## Key Capabilities
+
+### Group Management
+- **Group All Tabs**: Organizes all tabs across all windows by domain
+- **Group by Domain**: Groups only tabs from a specific domain
+- **Ungroup All**: Removes all tab groups at once
+- **Ungroup by Domain**: Removes groups for a specific domain only
+
+### Visual Organization
+- **8 Color Palette**: Grey, Blue, Red, Yellow, Green, Pink, Purple, Cyan
+- **Domain Labels**: Groups labeled with clean domain names
+- **Consistent Colors**: Same domain always gets the same color (during session)
+
+### Statistics
+- **Total Tabs**: Count of all tabs in current window
+- **Domains**: Number of unique domains detected
+- **Groups**: Count of active tab groups
+
 ## Version History
 
-- **v1.0.0**: Initial release with basic domain-based tab grouping
+- **v1.0.0**: Initial release with manual domain-based tab grouping, context menus, and multi-window support
 
 ## Support
 
